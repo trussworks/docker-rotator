@@ -4,29 +4,6 @@ FROM cimg/base:stable
 # Base image uses "circleci", to avoid using `sudo` run as root user
 USER root
 
-# install shellcheck
-ARG SHELLCHECK_VERSION=0.7.1
-ARG SHELLCHECK_SHA256SUM=64f17152d96d7ec261ad3086ed42d18232fcb65148b44571b564d688269d36c8
-RUN set -ex && cd ~ \
-    && curl -sSLO https://github.com/koalaman/shellcheck/releases/download/v${SHELLCHECK_VERSION}/shellcheck-v${SHELLCHECK_VERSION}.linux.x86_64.tar.xz \
-    && [ $(sha256sum shellcheck-v${SHELLCHECK_VERSION}.linux.x86_64.tar.xz | cut -f1 -d' ') = ${SHELLCHECK_SHA256SUM} ] \
-    && tar xvfa shellcheck-v${SHELLCHECK_VERSION}.linux.x86_64.tar.xz \
-    && mv shellcheck-v${SHELLCHECK_VERSION}/shellcheck /usr/local/bin \
-    && chown root:root /usr/local/bin/shellcheck \
-    && rm -vrf shellcheck-v${SHELLCHECK_VERSION} shellcheck-v${SHELLCHECK_VERSION}.linux.x86_64.tar.xz
-
-# install circleci cli
-ARG CIRCLECI_CLI_VERSION=0.1.9321
-ARG CIRCLECI_CLI_SHA256SUM=26a4b0c56c1e0ad32ee42368ee098dbe8e917006cbd45c36a5cfc079f6888d3b
-RUN set -ex && cd ~ \
-    && curl -sSLO https://github.com/CircleCI-Public/circleci-cli/releases/download/v${CIRCLECI_CLI_VERSION}/circleci-cli_${CIRCLECI_CLI_VERSION}_linux_amd64.tar.gz \
-    && [ $(sha256sum circleci-cli_${CIRCLECI_CLI_VERSION}_linux_amd64.tar.gz | cut -f1 -d' ') = ${CIRCLECI_CLI_SHA256SUM} ] \
-    && tar xzf circleci-cli_${CIRCLECI_CLI_VERSION}_linux_amd64.tar.gz \
-    && mv circleci-cli_${CIRCLECI_CLI_VERSION}_linux_amd64/circleci /usr/local/bin \
-    && chmod 755 /usr/local/bin/circleci \
-    && chown root:root /usr/local/bin/circleci \
-    && rm -vrf circleci-cli_${CIRCLECI_CLI_VERSION}_linux_amd64 circleci-cli_${CIRCLECI_CLI_VERSION}_linux_amd64.tar.gz
-
 # install awscliv2, disable default pager (less)
 ENV AWS_PAGER=""
 ARG AWSCLI_VERSION=2.0.37
@@ -40,6 +17,17 @@ RUN set -ex && cd ~ \
     && ./aws/install --update \
     && aws --version \
     && rm -r awscliv2.zip awscliv2.sig aws
+
+# install aws-nuke
+ARG ROTATOR_VERSION=0.5.6
+ARG ROTATOR_SHA256SUM=06db6d636b7419ae46c92c83c58e73b247686321163dd78bf55481c184f1dee6
+RUN set -ex && cd ~ \
+    && curl -sSLO https://github.com/chanzuckerberg/rotator/releases/download/v${ROTATOR_VERSION}/rotator_${ROTATOR_VERSION}_linux_amd64.tar.gz \
+    && [ $(sha256sum rotator_${ROTATOR_VERSION}_linux_amd64.tar.gz | cut -f1 -d' ') = ${ROTATOR_SHA256SUM} ] \
+    && tar xzf rotator_${ROTATOR_VERSION}_linux_amd64.tar.gz \
+    && mv rotator /usr/local/bin \
+    && rm -rf rotator_${ROTATOR_VERSION}_linux_amd64.tar.gz
+
 
 # apt-get all the things
 # Notes:

@@ -5,9 +5,8 @@ function test_latest() {
   tag=latest
   echo "Testing ${tag} Dockerfile"
 
-  docker run -it "trussworks/docker-template:${tag}" shellcheck --version
-  docker run -it "trussworks/docker-template:${tag}" circleci version
-  docker run -it "trussworks/docker-template:${tag}" aws --version
+  docker run -it "trussworks/rotator:${tag}" aws --version
+  docker run -it "trussworks/rotator:${tag}" rotator --help
 
   echo "Passed ${tag}"
 }
@@ -15,7 +14,7 @@ function test_latest() {
 # if doing multiple tags
 # for tag in latest; do
 #     echo "* Testing USER is properly set to 'circleci' on '$tag' tagged image"
-#     docker run -it trussworks/docker-template:$tag bash -xc '[[ $(whoami) = circleci ]]'
+#     docker run -it trussworks/rotator:$tag bash -xc '[[ $(whoami) = circleci ]]'
 
 #     case ${tag} in
 #         latest)
@@ -27,7 +26,7 @@ function test_latest() {
 
 tag=latest
 echo "* Testing USER is properly set to 'circleci' on '${tag}' tagged image"
-docker run -it trussworks/docker-template:$tag bash -xc '[[ $(whoami) = circleci ]]'
+docker run -it trussworks/rotator:$tag bash -xc '[[ $(whoami) = circleci ]]'
 test_latest
 
 echo Passed.
